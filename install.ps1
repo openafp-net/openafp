@@ -20,7 +20,7 @@ function Get-PlatformSuffix {
 
 # ---- main ----
 $PLATFORM = Get-PlatformSuffix
-$ARCHIVE = "openafp-gateway-${PLATFORM}.tar.gz"
+$ARCHIVE = "openafp-gateway-${PLATFORM}.zip"
 $URL     = "${REPO}/releases/download/${VERSION}/${ARCHIVE}"
 
 Write-Host "==> Installing OpenAFP ${VERSION} (${PLATFORM})"
@@ -38,21 +38,7 @@ try {
     Invoke-WebRequest -Uri $URL -OutFile $archivePath -UseBasicParsing
 
     Write-Host "==> Extracting..."
-    # Prefer Windows native tar.exe to avoid git bash / MSYS path conflicts
-    $tarBin = $null
-    $sysTar = Join-Path $env:SystemRoot "System32\tar.exe"
-    if (Test-Path $sysTar) {
-        $tarBin = $sysTar
-    } elseif (Get-Command tar -ErrorAction SilentlyContinue) {
-        $tarBin = (Get-Command tar).Source
-    }
-    if (-not $tarBin) {
-        throw "tar not found — Windows 10 1803+ required"
-    }
-    & $tarBin xzf $archivePath -C $TMPDIR
-    if ($LASTEXITCODE -ne 0) {
-        throw "tar extraction failed"
-    }
+    Expand-Archive -Path $archivePath -DestinationPath $TMPDIR -Force
 
     # install binary (archive contains platform-suffixed name, e.g. openafp-gateway-windows-amd64.exe)
     $binFile = Get-ChildItem -Path $TMPDIR -Recurse -Filter "openafp-gateway*.exe" | Select-Object -First 1
