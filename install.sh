@@ -38,7 +38,7 @@ trap "rm -rf ${TMPDIR}" EXIT
 
 echo "==> Downloading ${URL}"
 if command -v curl >/dev/null 2>&1; then
-  curl -fsSL -o "${TMPDIR}/${ARCHIVE}" "${URL}"
+  curl --proto '=https' --tlsv1.2 -fsSL -o "${TMPDIR}/${ARCHIVE}" "${URL}"
 elif command -v wget >/dev/null 2>&1; then
   wget -q -O "${TMPDIR}/${ARCHIVE}" "${URL}"
 else
