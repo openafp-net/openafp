@@ -7,7 +7,6 @@ $ErrorActionPreference = "Stop"
 $VERSION = if ($env:OPENAFP_VERSION) { $env:OPENAFP_VERSION } else { "v0.34.0" }
 $REPO    = "https://gitee.com/openafp/openafp-public"
 $CONFIG_DIR = Join-Path $HOME ".openafp"
-$BIN_DIR    = Join-Path $HOME "bin"
 
 # ---- platform detection ----
 function Get-PlatformSuffix {
@@ -26,9 +25,8 @@ $URL     = "${REPO}/releases/download/${VERSION}/${ARCHIVE}"
 
 Write-Host "==> Installing OpenAFP ${VERSION} (${PLATFORM})"
 
-# create directories
+# create config directory
 New-Item -ItemType Directory -Force -Path $CONFIG_DIR | Out-Null
-New-Item -ItemType Directory -Force -Path $BIN_DIR | Out-Null
 
 # download & extract
 $TMPDIR = Join-Path $env:TEMP "openafp-install-$(Get-Random)"

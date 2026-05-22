@@ -128,6 +128,3 @@ echo "  Binary: ${BIN_DIR}/openafp-gateway"
 echo "  Config: ${CONFIG_DIR}/config.yaml"
 echo ""
 echo "  To start: openafp-gateway --config ${CONFIG_DIR}/config.yaml"
-EOF
-chmod +x scripts/install.sh
-echo "install.sh created"
