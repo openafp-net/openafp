@@ -1,3 +1,5 @@
+[中文](README_CN.md) | English
+
 # OpenAFP
 Experimental Agent Overlay Network for real-world NAT environments.
 
@@ -5,13 +7,24 @@ Experimental Agent Overlay Network for real-world NAT environments.
 
 **Linux/macOS**
 ```bash
-curl -fsSL https://install.openafp.net/install.sh | bash
+curl --proto '=https' --tlsv1.2 -fsSL https://install.openafp.net/install.sh | bash
 ```
 
 **Windows (PowerShell as Administrator)**
 ```powershell
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 irm https://install.openafp.net/install.ps1 | iex
 ```
+
+> **💡 For cloud server users**
+>
+> When running the one‑line install command on Alibaba Cloud or similar platforms, the security system may trigger an alert (because an automated process is downloading and executing a remote script). This is normal and expected.
+>
+> **Solutions:**
+> - **Option 1 (recommended)**: Add `install.openafp.net` to the whitelist in your cloud security center.
+> - **Option 2**: Manually download the binary (see Manual Install Guide, coming soon).
+>
+> Personal computer users will not encounter this issue.
 
 ## Quick Start
 
