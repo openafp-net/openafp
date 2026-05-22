@@ -48,8 +48,13 @@ fi
 
 tar xzf "${TMPDIR}/${ARCHIVE}" -C "${TMPDIR}"
 
-# install binary
-sudo cp "${TMPDIR}/openafp-gateway" "${BIN_DIR}/openafp-gateway"
+# install binary (archive name varies by platform)
+BIN_FILE=$(ls "${TMPDIR}"/openafp-gateway* 2>/dev/null | head -1)
+if [ -z "$BIN_FILE" ]; then
+    echo "Error: cannot find openafp-gateway binary"
+    exit 1
+fi
+sudo mv "$BIN_FILE" "${BIN_DIR}/openafp-gateway"
 sudo chmod +x "${BIN_DIR}/openafp-gateway"
 
 # generate default config if not exists
@@ -71,6 +76,7 @@ network:
     announce_addrs: []
     bootstrap_peers:
         - /dns4/bootstrap.openafp.net/tcp/51890/p2p/12D3KooWCqGHJoqY7466vegQ6dKzUNE5b3Lp5DArqaEbZJBcJgB8
+        - /dns4/relay-hk.openafp.net/tcp/51890/p2p/12D3KooWJ4PzqTdm72iX8wU5g5ZiMUdGB1f6mAru5gjdSCXvNHKy
     enable_mdns: true
     relay:
         enabled: true
@@ -122,3 +128,6 @@ echo "  Binary: ${BIN_DIR}/openafp-gateway"
 echo "  Config: ${CONFIG_DIR}/config.yaml"
 echo ""
 echo "  To start: openafp-gateway --config ${CONFIG_DIR}/config.yaml"
+EOF
+chmod +x scripts/install.sh
+echo "install.sh created"

@@ -40,25 +40,37 @@ try {
     Invoke-WebRequest -Uri $URL -OutFile $archivePath -UseBasicParsing
 
     Write-Host "==> Extracting..."
-    tar xzf $archivePath -C $TMPDIR
+    # Prefer Windows native tar.exe to avoid git bash / MSYS path conflicts
+    $tarBin = $null
+    $sysTar = Join-Path $env:SystemRoot "System32\tar.exe"
+    if (Test-Path $sysTar) {
+        $tarBin = $sysTar
+    } elseif (Get-Command tar -ErrorAction SilentlyContinue) {
+        $tarBin = (Get-Command tar).Source
+    }
+    if (-not $tarBin) {
+        throw "tar not found — Windows 10 1803+ required"
+    }
+    & $tarBin xzf $archivePath -C $TMPDIR
     if ($LASTEXITCODE -ne 0) {
         throw "tar extraction failed"
     }
 
-    # install binary
-    $binary = Get-ChildItem -Path $TMPDIR -Recurse -Name "openafp-gateway.exe" |
-              Select-Object -First 1
-    if (-not $binary) {
-        throw "openafp-gateway.exe not found in archive"
+    # install binary (archive contains platform-suffixed name, e.g. openafp-gateway-windows-amd64.exe)
+    $binFile = Get-ChildItem -Path $TMPDIR -Recurse -Filter "openafp-gateway*.exe" | Select-Object -First 1
+    if (-not $binFile) {
+        Write-Error "Cannot find openafp-gateway executable"
+        exit 1
     }
-    Copy-Item -Path (Join-Path $TMPDIR $binary) `
-              -Destination (Join-Path $BIN_DIR "openafp-gateway.exe") -Force
-    Write-Host "==> Installed to $BIN_DIR\openafp-gateway.exe"
+    $installDir = Join-Path $env:ProgramFiles "OpenAFP"
+    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+    Move-Item -Path $binFile.FullName -Destination (Join-Path $installDir "openafp-gateway.exe") -Force
+    Write-Host "==> Installed to $installDir\openafp-gateway.exe"
 
     # generate default config if not exists
     $configPath = Join-Path $CONFIG_DIR "config.yaml"
     if (-not (Test-Path $configPath)) {
-@"
+        $configContent = @"
 server:
     port: 51888
     host: 0.0.0.0
@@ -75,6 +87,7 @@ network:
     announce_addrs: []
     bootstrap_peers:
         - /dns4/bootstrap.openafp.net/tcp/51890/p2p/12D3KooWCqGHJoqY7466vegQ6dKzUNE5b3Lp5DArqaEbZJBcJgB8
+        - /dns4/relay-hk.openafp.net/tcp/51890/p2p/12D3KooWJ4PzqTdm72iX8wU5g5ZiMUdGB1f6mAru5gjdSCXvNHKy
     enable_mdns: true
     relay:
         enabled: true
@@ -108,7 +121,9 @@ agent:
     local:
         enabled: false
 capabilities: []
-"@ | Out-File -FilePath $configPath -Encoding utf8
+"@
+        $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+        [System.IO.File]::WriteAllText($configPath, $configContent, $utf8NoBom)
         Write-Host "==> Default config created at ${configPath}"
     }
 
@@ -124,14 +139,14 @@ capabilities: []
 
     # add to PATH
     $userPath = [Environment]::GetEnvironmentVariable("PATH", "User")
-    if ($userPath -notlike "*${BIN_DIR}*") {
-        [Environment]::SetEnvironmentVariable("PATH", "${userPath};${BIN_DIR}", "User")
-        Write-Host "==> Added ${BIN_DIR} to user PATH (restart shell to take effect)"
+    if ($userPath -notlike "*${installDir}*") {
+        [Environment]::SetEnvironmentVariable("PATH", "${userPath};${installDir}", "User")
+        Write-Host "==> Added ${installDir} to user PATH (restart shell to take effect)"
     }
 
     Write-Host ""
     Write-Host "OpenAFP ${VERSION} installed successfully!"
-    Write-Host "  Binary: ${BIN_DIR}\openafp-gateway.exe"
+    Write-Host "  Binary: ${installDir}\openafp-gateway.exe"
     Write-Host "  Config: ${configPath}"
     Write-Host ""
     Write-Host "  To start: openafp-gateway --config ${configPath}"
