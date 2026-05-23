@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-VERSION="${OPENAFP_VERSION:-v0.36.0}"
+VERSION="${OPENAFP_VERSION:-v0.36.1}"
 REPO="https://gitee.com/openafp/openafp-public"
 CONFIG_DIR="${HOME}/.openafp"
 BIN_DIR="/usr/local/bin"
