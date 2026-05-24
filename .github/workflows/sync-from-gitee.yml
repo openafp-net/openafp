@@ -1,0 +1,36 @@
+name: Sync from Gitee
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时拉一次
+  workflow_dispatch:      # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+
+      - name: Clone Gitee public repo
+        run: |
+          git clone --depth 1 https://gitee.com/openafp/openafp-public.git /tmp/gitee-repo
+
+      - name: Sync files (Gitee → GitHub, .git excluded)
+        run: |
+          rsync -av --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            /tmp/gitee-repo/ ./
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "openafp-bot"
+          git config user.email "bot@openafp.net"
+          git add -A
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes, skipping."
+          else
+            git commit -m "Sync from Gitee $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
