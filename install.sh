@@ -3,6 +3,7 @@ set -e
 
 VERSION="${OPENAFP_VERSION:-v0.36.1}"
 REPO="https://gitee.com/openafp/openafp-public"
+GH_REPO="https://github.com/openafp-net/openafp"
 CONFIG_DIR="${HOME}/.openafp"
 BIN_DIR="/usr/local/bin"
 
@@ -37,13 +38,24 @@ TMPDIR=$(mktemp -d)
 trap "rm -rf ${TMPDIR}" EXIT
 
 echo "==> Downloading ${URL}"
+DOWNLOAD_OK=0
 if command -v curl >/dev/null 2>&1; then
-  curl --proto '=https' --tlsv1.2 -fsSL -o "${TMPDIR}/${ARCHIVE}" "${URL}"
+  curl --proto '=https' --tlsv1.2 -fsSL -o "${TMPDIR}/${ARCHIVE}" "${URL}" && DOWNLOAD_OK=1
 elif command -v wget >/dev/null 2>&1; then
-  wget -q -O "${TMPDIR}/${ARCHIVE}" "${URL}"
+  wget -q -O "${TMPDIR}/${ARCHIVE}" "${URL}" && DOWNLOAD_OK=1
 else
   echo "ERROR: curl or wget required" >&2
   exit 1
+fi
+
+if [ "$DOWNLOAD_OK" != "1" ]; then
+  GH_URL="${GH_REPO}/releases/download/${VERSION}/${ARCHIVE}"
+  echo "==> Gitee failed, trying GitHub: ${GH_URL}"
+  if command -v curl >/dev/null 2>&1; then
+    curl --proto '=https' --tlsv1.2 -fsSL -o "${TMPDIR}/${ARCHIVE}" "${GH_URL}"
+  else
+    wget -q -O "${TMPDIR}/${ARCHIVE}" "${GH_URL}"
+  fi
 fi
 
 tar xzf "${TMPDIR}/${ARCHIVE}" -C "${TMPDIR}"

@@ -6,6 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $VERSION = if ($env:OPENAFP_VERSION) { $env:OPENAFP_VERSION } else { "v0.36.1" }
 $REPO    = "https://gitee.com/openafp/openafp-public"
+$GH_REPO = "https://github.com/openafp-net/openafp"
 $CONFIG_DIR = Join-Path $HOME ".openafp"
 
 # ---- platform detection ----
@@ -33,9 +34,15 @@ $TMPDIR = Join-Path $env:TEMP "openafp-install-$(Get-Random)"
 New-Item -ItemType Directory -Force -Path $TMPDIR | Out-Null
 
 try {
-    Write-Host "==> Downloading ${URL}"
+    Write-Host "==> Downloading from Gitee: ${URL}"
     $archivePath = Join-Path $TMPDIR $ARCHIVE
-    Invoke-WebRequest -Uri $URL -OutFile $archivePath -UseBasicParsing
+    try {
+        Invoke-WebRequest -Uri $URL -OutFile $archivePath -UseBasicParsing
+    } catch {
+        $GH_URL = "${GH_REPO}/releases/download/${VERSION}/${ARCHIVE}"
+        Write-Host "==> Gitee failed, trying GitHub: ${GH_URL}"
+        Invoke-WebRequest -Uri $GH_URL -OutFile $archivePath -UseBasicParsing
+    }
 
     Write-Host "==> Extracting..."
     Expand-Archive -Path $archivePath -DestinationPath $TMPDIR -Force
