@@ -1,47 +1,161 @@
 [中文](README_CN.md) | English
 
-# OpenAFP
-Experimental Agent Overlay Network for real-world NAT environments.
+OpenAFP
 
-## Install
+Seamlessly connect AI Agents across home, office, and cloud — no public IP required.
 
-**Linux/macOS**
+OpenAFP is a connectivity layer purpose-built for AI Agents (Claude Desktop, MCP Servers, automation tools). It enables Agents running behind home networks, corporate firewalls, and cloud VMs to automatically discover and connect to each other — even under the most challenging network conditions.
+
+No public IP. No port forwarding. No complicated NAT traversal setup.
+
+---
+
+📦 One-Line Install
+
+Linux / macOS
+
 ```bash
 curl --proto '=https' --tlsv1.2 -fsSL https://install.openafp.net/install.sh | bash
 ```
 
-**Windows (PowerShell as Administrator)**
+Windows (PowerShell as Administrator)
+
 ```powershell
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 irm https://install.openafp.net/install.ps1 | iex
 ```
 
-> **💡 For cloud server users**
->
-> When running the one‑line install command on Alibaba Cloud or similar platforms, the security system may trigger an alert (because an automated process is downloading and executing a remote script). This is normal and expected.
->
-> **Solutions:**
-> - **Option 1 (recommended)**: Add `install.openafp.net` to the whitelist in your cloud security center.
-> - **Option 2**: Manually download the binary (see Manual Install Guide, coming soon).
->
-> Personal computer users will not encounter this issue.
+After installation, the gateway starts automatically and joins the OpenAFP public bootstrap network for peer discovery and connectivity.
 
-## Quick Start
-
-After installation, wait 30 seconds for DHT sync, then:
+Wait about 30 seconds, then verify your node is running:
 
 ```bash
 curl http://localhost:51888/health
-curl -X POST http://localhost:51888/afp -d '{"jsonrpc":"2.0","method":"invoke","params":{"capability":"system/hostname"},"id":1}'
 ```
 
-## Documentation
+If you see `{"status":"ok"}`, your node is up and running.
 
-- [Protocol Specification](protocol/SPEC.md)
-- [API Reference](docs/API.md)
-- [Capabilities](docs/CAPABILITIES.md)
-- [Networking Pitfalls](docs/NETWORKING_PITFALLS.md)
+Ready to test cross-node invocation?
 
-## License
+```bash
+curl -X POST http://localhost:51888/afp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"invoke","params":{"capability":"system/hostname"},"id":1}'
+```
 
-Apache 2.0 — see [LICENSE](LICENSE)
+You'll see hostnames from other nodes on the network — proof that your Agent has successfully joined OpenAFP.
+
+💡 For cloud server users: some cloud platforms (e.g., Alibaba Cloud) may flag the one-line install script as a security alert. This is normal behavior for automated script execution. If blocked, whitelist `install.openafp.net` in your security center, or manually download the Release binary.
+
+---
+
+🚀 What Can You Do with OpenAFP?
+
+Scenario 1: Multi-Agent Auto-Discovery & Collaboration
+
+Agents on your home lab, office network, and cloud VMs automatically discover each other and collaborate on tasks. For example: Node A fetches data → Node B analyzes → Node C pushes results.
+
+No public IPs. No manual port configuration. Nodes maintain persistent connections across different ISPs, countries, and network environments.
+
+Ideal for:
+
+· Multi-node AI workflows
+· Distributed Agent collaboration
+· Home / office / cloud hybrid networks
+
+✅ Verified — heterogeneous nodes across multiple regions, stable long-term operation
+
+---
+
+Scenario 2: Mobile Hotspot / 5G / Temporary Network Environments
+
+Agents running behind mobile hotspots, carrier-grade NAT, or temporary office networks can still connect to home devices and cloud servers automatically.
+
+Ideal for:
+
+· 5G / mobile hotspot environments
+· Temporary or pop-up office networks
+· Remote access to home NAS / mini-PCs
+
+✅ Verified — stable connectivity under complex network conditions
+
+---
+
+Scenario 3: Access Corporate Intranet Tools from Home AI (Planned)
+
+Deploy MCP Servers, internal APIs, and database tools inside the corporate network; your home AI Agent or Claude Desktop can access them through OpenAFP directly.
+
+Ideal for:
+
+· Corporate intranet tool access
+· Home-office setups
+· Remote AI tool collaboration
+
+🚧 Planned — MCP over OpenAFP Prototype
+
+---
+
+🔐 Security & Design Principles
+
+OpenAFP defaults to the principle of *least capability exposure*.
+
+Currently exposed capabilities are strictly limited:
+
+· No arbitrary shell execution
+· No system-level remote control
+· File reads are path- and size-capped by default
+· All capabilities must be explicitly registered
+· Nodes establish connectivity only; no automatic privilege sharing
+
+The goal: safety, stability, and out-of-the-box success on the real Internet.
+
+---
+
+📢 We Want to Hear About Your Real-World Use Case
+
+If you're dealing with:
+
+· Home devices that can't be reached from outside
+· Cross-region AI Agent collaboration challenges
+· Multi-node auto-connectivity problems
+· Home / office / cloud device interconnection
+· Or any "Agent connectivity" challenge
+
+Please open an Issue and share your real-world scenario. Your feedback directly shapes OpenAFP's roadmap.
+
+---
+
+🧭 Resources
+
+· Live network status: status.openafp.net
+· Full capability list: Capabilities
+· Protocol specification (experimental draft): OpenAFP Protocol
+· FAQ & networking pitfalls: Networking Pitfalls
+
+---
+
+🤝 Contributing
+
+OpenAFP is still experimental. We welcome:
+
+· Bug reports
+· Real-world usage feedback
+· Capability & protocol proposals
+· Testing & documentation improvements
+
+Connect with us:
+
+· GitHub Issues
+· Gitee Issues
+· Discord (planned)
+· WeChat group (planned)
+
+---
+
+📄 License
+
+Apache 2.0 — see LICENSE
+
+---
+
+OpenAFP — Let AI Agents Connect Freely.
