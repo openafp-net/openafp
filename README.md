@@ -2,11 +2,11 @@
 
 OpenAFP
 
-Seamlessly connect AI Agents across home, office, and cloud — no public IP required.
+Connect two internal network devices as if they were on the same LAN.
 
-OpenAFP is a connectivity layer purpose-built for AI Agents (Claude Desktop, MCP Servers, automation tools). It enables Agents running behind home networks, corporate firewalls, and cloud VMs to automatically discover and connect to each other — even under the most challenging network conditions.
+OpenAFP is a connectivity layer purpose-built for connecting devices behind NAT. No public IP, no port forwarding — it lets two internal-network devices establish direct connections and communicate as if they're on the same local network.
 
-No public IP. No port forwarding. No complicated NAT traversal setup.
+![Topology](https://openafp.net/topology.svg)
 
 ---
 
