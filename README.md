@@ -59,9 +59,9 @@ No public IPs. No manual port configuration. Nodes maintain persistent connectio
 
 Ideal for:
 
-· Multi-node AI workflows
-· Distributed Agent collaboration
-· Home / office / cloud hybrid networks
+- Multi-node AI workflows
+- Distributed Agent collaboration
+- Home / office / cloud hybrid networks
 
 ✅ Verified — heterogeneous nodes across multiple regions, stable long-term operation
 
@@ -73,9 +73,9 @@ Agents running behind mobile hotspots, carrier-grade NAT, or temporary office ne
 
 Ideal for:
 
-· 5G / mobile hotspot environments
-· Temporary or pop-up office networks
-· Remote access to home NAS / mini-PCs
+- 5G / mobile hotspot environments
+- Temporary or pop-up office networks
+- Remote access to home NAS / mini-PCs
 
 ✅ Verified — stable connectivity under complex network conditions
 
@@ -87,9 +87,9 @@ Deploy MCP Servers, internal APIs, and database tools inside the corporate netwo
 
 Ideal for:
 
-· Corporate intranet tool access
-· Home-office setups
-· Remote AI tool collaboration
+- Corporate intranet tool access
+- Home-office setups
+- Remote AI tool collaboration
 
 🚧 Planned — MCP over OpenAFP Prototype
 
@@ -101,11 +101,11 @@ OpenAFP defaults to the principle of *least capability exposure*.
 
 Currently exposed capabilities are strictly limited:
 
-· No arbitrary shell execution
-· No system-level remote control
-· File reads are path- and size-capped by default
-· All capabilities must be explicitly registered
-· Nodes establish connectivity only; no automatic privilege sharing
+- No arbitrary shell execution
+- No system-level remote control
+- File reads are path- and size-capped by default
+- All capabilities must be explicitly registered
+- Nodes establish connectivity only; no automatic privilege sharing
 
 The goal: safety, stability, and out-of-the-box success on the real Internet.
 
@@ -115,11 +115,11 @@ The goal: safety, stability, and out-of-the-box success on the real Internet.
 
 If you're dealing with:
 
-· Home devices that can't be reached from outside
-· Cross-region AI Agent collaboration challenges
-· Multi-node auto-connectivity problems
-· Home / office / cloud device interconnection
-· Or any "Agent connectivity" challenge
+- Home devices that can't be reached from outside
+- Cross-region AI Agent collaboration challenges
+- Multi-node auto-connectivity problems
+- Home / office / cloud device interconnection
+- Or any "Agent connectivity" challenge
 
 Please open an Issue and share your real-world scenario. Your feedback directly shapes OpenAFP's roadmap.
 
@@ -127,10 +127,10 @@ Please open an Issue and share your real-world scenario. Your feedback directly 
 
 🧭 Resources
 
-· Live network status: status.openafp.net
-· Full capability list: Capabilities
-· Protocol specification (experimental draft): OpenAFP Protocol
-· FAQ & networking pitfalls: Networking Pitfalls
+- [Live network status](https://status.openafp.net)
+- [Full capability list](docs/CAPABILITIES.md)
+- [Protocol specification (experimental draft)](protocol/SPEC.md)
+- [FAQ & networking pitfalls](docs/NETWORKING_PITFALLS.md)
 
 ---
 
@@ -138,23 +138,25 @@ Please open an Issue and share your real-world scenario. Your feedback directly 
 
 OpenAFP is still experimental. We welcome:
 
-· Bug reports
-· Real-world usage feedback
-· Capability & protocol proposals
-· Testing & documentation improvements
+- Bug reports
+- Real-world usage feedback
+- Capability & protocol proposals
+- Testing & documentation improvements
 
 Connect with us:
 
-· GitHub Issues
-· Gitee Issues
-· Discord (planned)
-· WeChat group (planned)
+- [GitHub Discussions (Forum)](https://github.com/openafp-net/openafp/discussions) – technical discussions, roadmap, use-case sharing (global audience)
+- [Gitee Issues (Discussions)](https://gitee.com/openafp/openafp-public/issues) – questions, use-case sharing (recommended for Chinese-speaking users)
+- GitHub Issues
+- Gitee Issues
+- Discord (planned)
+- WeChat: 2727989 (please note OpenAFP)
 
 ---
 
 📄 License
 
-Apache 2.0 — see LICENSE
+Apache 2.0 — see [LICENSE](LICENSE)
 
 ---
 

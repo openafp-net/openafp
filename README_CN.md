@@ -57,9 +57,9 @@ curl -X POST http://localhost:51888/afp \
 
 适用于：
 
-· 多节点 AI Workflow
-· 分布式 Agent 协作
-· 家庭 / 公司 / 云端混合网络
+- 多节点 AI Workflow
+- 分布式 Agent 协作
+- 家庭 / 公司 / 云端混合网络
 
 ✅ 已验证（多地域异构节点全网贯通，长期稳定运行）
 
@@ -71,9 +71,9 @@ curl -X POST http://localhost:51888/afp \
 
 适用于：
 
-· 5G / 移动热点环境
-· 临时办公网络
-· 家庭 NAS / 小主机远程互联
+- 5G / 移动热点环境
+- 临时办公网络
+- 家庭 NAS / 小主机远程互联
 
 ✅ 已验证（复杂网络环境下稳定互联）
 
@@ -85,9 +85,9 @@ curl -X POST http://localhost:51888/afp \
 
 适用于：
 
-· 公司内网工具访问
-· 家庭办公环境
-· AI 工具远程协作
+- 公司内网工具访问
+- 家庭办公环境
+- AI 工具远程协作
 
 🚧 规划中（MCP over OpenAFP Prototype）
 
@@ -99,11 +99,11 @@ OpenAFP 默认采用"最小能力暴露"原则。
 
 当前公开能力经过严格限制：
 
-· 不开放任意 shell 执行
-· 不开放系统级远程控制
-· 文件读取默认限制路径与流量大小
-· 所有能力需显式注册
-· 默认仅建立节点连接，不自动共享系统权限
+- 不开放任意 shell 执行
+- 不开放系统级远程控制
+- 文件读取默认限制路径与流量大小
+- 所有能力需显式注册
+- 默认仅建立节点连接，不自动共享系统权限
 
 目标是：在真实互联网环境中，优先保证安全、稳定与默认成功。
 
@@ -113,11 +113,11 @@ OpenAFP 默认采用"最小能力暴露"原则。
 
 如果你正在解决：
 
-· 家里设备无法被外部访问
-· AI Agent 跨地域协作困难
-· 多节点自动连接问题
-· 家庭 / 公司 / 云端设备互联
-· 或任何"Agent 互联"相关问题
+- 家里设备无法被外部访问
+- AI Agent 跨地域协作困难
+- 多节点自动连接问题
+- 家庭 / 公司 / 云端设备互联
+- 或任何"Agent 互联"相关问题
 
 欢迎提交 Issue 分享你的真实场景。你的反馈将直接影响 OpenAFP 后续版本的优先方向。
 
@@ -125,10 +125,10 @@ OpenAFP 默认采用"最小能力暴露"原则。
 
 🧭 资源链接
 
-· 实时网络状态：status.openafp.net
-· 完整能力列表：Capabilities
-· 协议规范（实验草案）：OpenAFP Protocol
-· 常见问题与网络踩坑：Networking Pitfalls
+- [实时网络状态](https://status.openafp.net)
+- [完整能力列表](docs/CAPABILITIES.md)
+- [协议规范（实验草案）](protocol/SPEC.md)
+- [常见问题与网络踩坑](docs/NETWORKING_PITFALLS.md)
 
 ---
 
@@ -136,23 +136,25 @@ OpenAFP 默认采用"最小能力暴露"原则。
 
 OpenAFP 当前仍处于实验阶段，欢迎：
 
-· 报告 Bug
-· 提交真实使用反馈
-· 提出能力与协议建议
-· 参与测试与文档完善
+- 报告 Bug
+- 提交真实使用反馈
+- 提出能力与协议建议
+- 参与测试与文档完善
 
 反馈与讨论：
 
-· GitHub Issues
-· Gitee Issues
-· Discord（规划中）
-· 微信交流群（规划中）
+- [GitHub Discussions（论坛）](https://github.com/openafp-net/openafp/discussions) – 技术讨论、路线图、场景分享（面向海外用户）
+- [Gitee Issues（讨论区）](https://gitee.com/openafp/openafp-public/issues) – 提问、分享使用场景（国内用户推荐）
+- GitHub Issues
+- Gitee Issues
+- Discord（规划中）
+- 微信联系：2727989（添加请备注 OpenAFP）
 
 ---
 
 📄 License
 
-Apache 2.0 — 详见 LICENSE
+Apache 2.0 — 详见 [LICENSE](LICENSE)
 
 ---
 
