@@ -1,105 +1,78 @@
 # OpenAFP HTTP API 文档
 
-> ⚠️ 部分端点（Market API）对应模块已删除，仅保留文档供参考。
-
----
-
 ## 概述
 
-OpenAFP 网关提供以下 HTTP API：
+基础 URL：`http://localhost:51888`
 
-1. **核心 AFP API** — AFP 协议通信、异步任务查询、节点管理
-2. **市场 API** — 代理注册、发现、评分和协商（⚠️ 对应模块已移除，以下文档仅供参考）
-
-所有 API 响应使用统一的 JSON 格式：
-
-```json
-{
-  "success": true,
-  "data": { ... },
-  "error": "错误信息（如有）",
-  "message": "提示信息（可选）"
-}
-```
+所有端点返回 JSON。AFP 协议端点使用 JSON-RPC 2.0 格式。
 
 ---
 
-## 核心 API
+## 核心端点
 
 ### POST `/afp`
 
-**描述**: 主 AFP JSON-RPC 端点，用于所有 AFP 协议方法调用。
+主 AFP JSON-RPC 2.0 端点。
 
-**请求格式**: JSON-RPC 2.0
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "method_name",
-  "params": { ... },
-  "id": 1
-}
-```
-
-**支持的方法**:
+**支持的方法：**
 
 | 方法 | 描述 | 参数 |
 |------|------|------|
-| `discover` | 获取对端代理能力列表 | 无 |
-| `invoke` | 调用一个能力 | `capability`: 能力名称<br>`input`: 输入参数<br>`timeout`: 超时（秒，可选） |
-| `register` | 注册代理 | `agent_id`, `name`, `capabilities`, `endpoint` |
-| `get_status` | 查询异步任务状态 | `request_id`: 任务 ID |
-| `system/list_agents` | 列出本地所有代理 | 无 |
+| `invoke` | 调用能力 | `capability`、`input`、`agent_id`（可选）、`timeout`（可选） |
+| `discover` | 发现对端能力 | — |
+| `register` | 注册代理 | `agent_id`、`name`、`capabilities`、`endpoint` |
+| `get_status` | 查询异步任务状态 | `request_id` |
+| `system/list_agents` | 列出所有已注册代理 | — |
 
-**示例**:
+**示例：**
 ```bash
+# 本地调用（本地优先）
 curl -X POST http://localhost:51888/afp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"system/list_agents","params":{},"id":1}'
+  -d '{"jsonrpc":"2.0","method":"invoke","params":{"capability":"system/hostname"},"id":1}'
+
+# 跨节点调用
+curl -X POST http://localhost:51888/afp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"invoke","params":{"agent_id":"p2p://<peer_id>","capability":"system/whoami"},"id":2}'
 ```
 
 ---
 
 ### GET `/afp/status/{request_id}`
 
-**描述**: 查询异步调用的任务状态。
+查询异步任务状态。
 
-**路径参数**:
-- `request_id` - 异步任务 ID
-
-**响应**:
 ```json
-{
-  "success": true,
-  "data": {
-    "id": "request-id",
-    "status": "completed|processing|failed",
-    "result": { ... },
-    "created_at": "2026-04-23T10:00:00Z"
-  }
-}
+{"success":true,"data":{"id":"req-123","status":"completed","result":{...}}}
 ```
 
 ---
 
 ### GET `/v1/agents`
 
-**描述**: 列出所有已注册的代理及其能力和熔断器状态。
+列出所有已注册代理，包含能力和熔断器状态。
 
-**响应**:
+**查询参数：**
+- `capability` — 按能力名称过滤（如 `?capability=system/hostname`）
+
+**响应：**
 ```json
 {
   "success": true,
-  "agents": [
-    {
-      "id": "agent-id",
-      "name": "Agent Name",
-      "endpoint": "p2p://...",
-      "enabled": true,
-      "capabilities": [{ "name": "...", "description": "..." }]
-    }
-  ],
-  "total": 5
+  "total": 3,
+  "agents": [{
+    "id": "agent-id",
+    "name": "Agent Name",
+    "endpoint": "p2p://...",
+    "enabled": true,
+    "capabilities": [{"name": "system/hostname", "description": "获取主机名"}],
+    "circuit_state": "closed",
+    "failure_threshold": 5,
+    "timeout_seconds": 60,
+    "consecutive_failures": 0,
+    "total_invocations": 42
+  }]
 }
 ```
 
@@ -107,71 +80,70 @@ curl -X POST http://localhost:51888/afp \
 
 ### GET `/health`
 
-**描述**: 健康检查端点。
+健康检查。
 
-**响应**:
 ```json
-{"status":"ok","agents":5}
+{"status":"ok","agents":3}
 ```
 
 ---
 
 ### GET `/metrics`
 
-**描述**: Prometheus 监控指标端点（需 `observability.metrics.enabled: true`，受认证中间件保护）。
+Prometheus 监控指标（需启用 `observability.metrics.enabled: true`，受认证中间件保护）。
 
 ---
 
-## 市场 API (Marketplace) — ⚠️ 已移除
+## Inspect 调试端点
 
-以下端点对应的 `pkg/market/` 模块已删除。文档保留仅供历史参考。
+用于网络故障排查。受认证中间件保护。
 
-- `POST /market/register` — 注册代理到市场
-- `POST /market/deregister/{agent_id}` — 注销代理
-- `GET /market/agent/{agent_id}` — 获取代理详情
-- `GET /market/search` / `POST /market/search` — 按能力搜索
-- `GET /market/agents` — 列出活跃代理（管理接口）
-- `POST /market/rating` — 提交评分
-- `GET /market/agent/{agent_id}/ratings` — 评分历史
-- `POST /market/negotiate` — 价格协商
-- `GET /market/health` — 市场健康检查
-- `GET /market/stats` — 市场统计
+### GET `/v1/inspect/peers`
+
+列出已连接的 P2P 对等节点。
+
+```json
+{
+  "peers": [{
+    "id": "12D3KooW...",
+    "addresses": ["/ip4/121.199.174.198/tcp/51890"],
+    "protocols": ["/ipfs/kad/1.0.0", "/ipfs/id/1.0.0"],
+    "connected": true,
+    "direction": "outbound",
+    "latency": "35ms"
+  }]
+}
+```
+
+### GET `/v1/inspect/self`
+
+查看本节点 P2P 身份信息。
+
+```json
+{
+  "peer_id": "12D3KooWH...",
+  "addresses": ["/ip4/180.98.68.3/tcp/51890", "/ip4/127.0.0.1/tcp/51890"],
+  "protocols": ["/ipfs/kad/1.0.0", "/ipfs/id/1.0.0", "/libp2p/dcutr", "..."]
+}
+```
+
+### GET `/v1/inspect/dht`
+
+查看 DHT 路由表（最多 50 条，不含已连接节点）。
+
+```json
+{"size": 42, "peers": [{"peer_id": "12D3KooX...", "addresses": ["/ip4/..."]}]}
+```
 
 ---
 
 ## 错误码
 
-| HTTP 状态码 | 含义 |
-|-------------|------|
-| `200` | 成功 |
-| `400` | 请求参数错误 |
-| `401` | 未认证 |
-| `403` | 无权限 |
-| `404` | 资源不存在 |
-| `500` | 服务器内部错误 |
-
----
-
-## 示例用法
-
-### 调用本地能力
-
-```bash
-curl -X POST http://localhost:51888/afp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"invoke","params":{"capability":"system/hostname"},"id":1}'
-```
-
-### 跨节点调用
-
-```bash
-curl -X POST http://localhost:51888/afp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"invoke","params":{"agent_id":"p2p://<peer_id>","capability":"system/whoami"},"id":2}'
-```
-
-### 查看在线节点
-
-```bash
-curl http://localhost:51888/v1/agents
-```
+| HTTP | 含义 |
+|------|------|
+| 200 | 成功 |
+| 400 | 请求参数错误 |
+| 401 | 未认证 |
+| 403 | 无权限 |
+| 404 | 资源不存在 |
+| 500 | 服务器内部错误 |
