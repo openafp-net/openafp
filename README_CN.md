@@ -2,7 +2,7 @@ OpenAFP — 让 AI Agent 自由互联
 
 无需公网 IP，内网 Agent 也能被外部发现和调用。
 
-OpenAFP 是一个专门为内网 Agent 互联设计的连接层。无需公网 IP，无需端口映射 —— 它让两个都在内网的设备直接建立连接、互相通信，就像它们在同一个局域网里。
+OpenAFP 是专为 AI Agent 设计的去中心化连接层，让位于家庭、公司、云端的 Agent，在复杂网络环境下自动发现与协作。
 
 ![内网互联拓扑](https://openafp.net/topology.svg)
 
@@ -148,7 +148,7 @@ OpenAFP 当前仍处于实验阶段，欢迎：
 - GitHub Issues
 - Gitee Issues
 - Discord（规划中）
-- 微信联系：2727989（添加请备注 OpenAFP）
+- 邮箱：2727989@qq.com
 
 ---
 
