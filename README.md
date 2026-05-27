@@ -4,7 +4,7 @@ OpenAFP — Free Interconnection for AI Agents
 
 No public IP required. Agents behind NAT can be discovered and invoked.
 
-OpenAFP is a connectivity layer purpose-built for connecting AI Agents behind NAT. No public IP, no port forwarding — it lets two internal-network devices establish direct connections and communicate as if they're on the same local network.
+OpenAFP is a decentralized connectivity layer purpose-built for AI Agents, enabling auto-discovery and collaboration across home, office, and cloud — even under complex network conditions.
 
 ![Topology](https://openafp.net/topology-en.svg)
 
@@ -150,7 +150,7 @@ Connect with us:
 - GitHub Issues
 - Gitee Issues
 - Discord (planned)
-- WeChat: 2727989 (please note OpenAFP)
+- Email: 2727989@qq.com
 
 ---
 
