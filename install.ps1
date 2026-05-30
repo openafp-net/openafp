@@ -6,6 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $VERSION = if ($env:OPENAFP_VERSION) { $env:OPENAFP_VERSION } else { "v0.36.7" }
 $REPO    = "https://gitee.com/openafp/openafp-public"
+$GH_REPO = "https://github.com/openafp-net/openafp"
 $CONFIG_DIR = Join-Path $HOME ".openafp"
 
 # ---- platform detection ----
@@ -22,6 +23,7 @@ function Get-PlatformSuffix {
 $PLATFORM = Get-PlatformSuffix
 $ARCHIVE = "openafp-gateway-${PLATFORM}.zip"
 $URL     = "${REPO}/releases/download/${VERSION}/${ARCHIVE}"
+$GH_URL  = "${GH_REPO}/releases/download/${VERSION}/${ARCHIVE}"
 
 Write-Host "==> Installing OpenAFP ${VERSION} (${PLATFORM})"
 
@@ -32,10 +34,26 @@ New-Item -ItemType Directory -Force -Path $CONFIG_DIR | Out-Null
 $TMPDIR = Join-Path $env:TEMP "openafp-install-$(Get-Random)"
 New-Item -ItemType Directory -Force -Path $TMPDIR | Out-Null
 
+function Download-File {
+    param($Uri, $OutFile)
+    try {
+        Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 try {
     Write-Host "==> Downloading ${URL}"
     $archivePath = Join-Path $TMPDIR $ARCHIVE
-    Invoke-WebRequest -Uri $URL -OutFile $archivePath -UseBasicParsing
+    if (-not (Download-File -Uri $URL -OutFile $archivePath)) {
+        Write-Host "==> Gitee download failed, trying GitHub..."
+        if (-not (Download-File -Uri $GH_URL -OutFile $archivePath)) {
+            Write-Error "Download failed from both Gitee and GitHub"
+            exit 1
+        }
+    }
 
     Write-Host "==> Extracting..."
     Expand-Archive -Path $archivePath -DestinationPath $TMPDIR -Force

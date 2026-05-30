@@ -3,6 +3,7 @@ set -e
 
 VERSION="${OPENAFP_VERSION:-v0.36.7}"
 REPO="https://gitee.com/openafp/openafp-public"
+GH_REPO="https://github.com/openafp-net/openafp"
 CONFIG_DIR="${HOME}/.openafp"
 BIN_DIR="/usr/local/bin"
 
@@ -26,6 +27,7 @@ detect_platform() {
 PLATFORM=$(detect_platform)
 ARCHIVE="openafp-gateway-${PLATFORM}.tar.gz"
 URL="${REPO}/releases/download/${VERSION}/${ARCHIVE}"
+GH_URL="${GH_REPO}/releases/download/${VERSION}/${ARCHIVE}"
 
 echo "==> Installing OpenAFP ${VERSION} (${PLATFORM})"
 
@@ -36,14 +38,24 @@ mkdir -p "${CONFIG_DIR}"
 TMPDIR=$(mktemp -d)
 trap "rm -rf ${TMPDIR}" EXIT
 
+download() {
+  local url="$1" out="$2"
+  if command -v curl >/dev/null 2>&1; then
+    curl --proto '=https' --tlsv1.2 -fsSL -o "$out" "$url"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -O "$out" "$url"
+  else
+    return 1
+  fi
+}
+
 echo "==> Downloading ${URL}"
-if command -v curl >/dev/null 2>&1; then
-  curl --proto '=https' --tlsv1.2 -fsSL -o "${TMPDIR}/${ARCHIVE}" "${URL}"
-elif command -v wget >/dev/null 2>&1; then
-  wget -q -O "${TMPDIR}/${ARCHIVE}" "${URL}"
-else
-  echo "ERROR: curl or wget required" >&2
-  exit 1
+if ! download "${URL}" "${TMPDIR}/${ARCHIVE}"; then
+  echo "==> Gitee download failed, trying GitHub..."
+  download "${GH_URL}" "${TMPDIR}/${ARCHIVE}" || {
+    echo "ERROR: download failed from both Gitee and GitHub" >&2
+    exit 1
+  }
 fi
 
 tar xzf "${TMPDIR}/${ARCHIVE}" -C "${TMPDIR}"
@@ -116,8 +128,7 @@ fi
 
 # generate identity key if not exists
 if [ ! -f "${CONFIG_DIR}/identity.key" ]; then
-  openssl rand -base64 32 > "${CONFIG_DIR}/identity.key" 2>/dev/null || \
-    head -c 32 /dev/urandom | base64 > "${CONFIG_DIR}/identity.key"
+  openssl rand -base64 32 > "${CONFIG_DIR}/identity.key" 2>/dev/null ||     head -c 32 /dev/urandom | base64 > "${CONFIG_DIR}/identity.key"
   chmod 600 "${CONFIG_DIR}/identity.key"
   echo "==> Identity key generated at ${CONFIG_DIR}/identity.key"
 fi
