@@ -4,7 +4,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$VERSION = if ($env:OPENAFP_VERSION) { $env:OPENAFP_VERSION } else { "v0.36.11" }
+$VERSION = if ($env:OPENAFP_VERSION) { $env:OPENAFP_VERSION } else { "v0.37.0" }
 $REPO    = "https://gitee.com/openafp/openafp-public"
 $GH_REPO = "https://github.com/openafp-net/openafp"
 $CONFIG_DIR = Join-Path $HOME ".openafp"
