@@ -1,10 +1,10 @@
 {
   "version": "v0.38.0",
   "platforms": {
-    "linux-amd64":   "openafp-gateway-linux-amd64",
-    "linux-arm64":   "openafp-gateway-linux-arm64",
-    "darwin-amd64":  "openafp-gateway-darwin-amd64",
-    "darwin-arm64":  "openafp-gateway-darwin-arm64",
-    "windows-amd64": "openafp-gateway-windows-amd64.exe"
+    "linux-amd64":   "openafp-gateway-linux-amd64.tar.gz",
+    "linux-arm64":   "openafp-gateway-linux-arm64.tar.gz",
+    "darwin-amd64":  "openafp-gateway-darwin-amd64.tar.gz",
+    "darwin-arm64":  "openafp-gateway-darwin-arm64.tar.gz",
+    "windows-amd64": "openafp-gateway-windows-amd64.zip"
   }
 }
